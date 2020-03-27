@@ -1,0 +1,126 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+# Data Preprocessing
+library(readr)
+Data <- read_csv("Part 2 - Regression/Section 4 - Simple Linear Regression/Salary_Data.csv")
+View(Data)
+```
+
+
+```{r}
+# Handeling Missing Data
+# dealing with the missing values independently
+#Data$Age = ifelse(is.na(Data$Age),
+                    # ave(Data$Age, FUN = function(x) mean(x, na.rm = TRUE)),
+                    # Data$Age)
+```
+
+
+```{r}
+#Data$Salary = ifelse(is.na(Data$Salary),
+                     #ave(Data$Salary, FUN = function(x) mean(x, na.rm = TRUE)),
+                     #Data$Salary)
+
+```
+
+```{r}
+Data
+```
+```{r}
+# Encoding categorical data
+# factor function converts categorical to numerical but sees the values as factors
+
+#Data$Country=factor(Data$Country,
+                  #levels=c("France","Spain","Germany"),
+                  #labels = c(1,2,3))
+
+```
+
+```{r}
+#Data$Purchased=factor(Data$Purchased,
+                  #levels=c("No","Yes"),
+                  #labels = c(0,1))
+```
+
+```{r}
+# split the data
+library(caTools)
+```
+```{r}
+set.seed(123)# random state
+split = sample.split(Data$Salary, SplitRatio = 2/3)
+#specifing the trainig set. True is for the trainig set
+training_set = subset(Data,split==TRUE)
+test_set = subset(Data,split==FALSE)
+```
+
+```{r}
+#feature scaling
+#training_set = scale(training_set)
+#test_set = scale(test_set)
+# error ocours here because the encoded data are factors and not numeric, so we have to exclude them from the scaling.
+
+#training_set[, 2:3] = scale(training_set[, 2:3])
+#test_set[, 2:3] = scale(test_set[,2:3])
+```
+
+```{r}
+# Simple Linear regression
+regression = lm(formula =Salary~YearsExperience, data = training_set)
+
+summary(regression)
+```
+
+```{r}
+# predict the test set
+y_pred = predict(regression, newdata = test_set)
+y_pred
+```
+```{r}
+# visualize trainigset
+library(ggplot2)
+# plot the observation points
+ggplot()+
+  geom_point(aes(x = training_set$YearsExperience, y=training_set$Salary), colour= "red")+
+  geom_line(aes(x = training_set$YearsExperience, y = predict(regression, newdata = training_set)), colour = "blue")+
+  ggtitle("Salary vs Experience(Training Set)")+
+  xlab("Years of Experience")+
+  ylab("Salary")
+```
+```{r}
+# visualize
+library(ggplot2)
+# plot the observation points
+ggplot()+
+  geom_point(aes(x = test_set$YearsExperience, y=test_set$Salary), colour= "red")+
+  geom_line(aes(x = training_set$YearsExperience, y = predict(regression, newdata = training_set)), colour = "blue")+
+  ggtitle("Salary vs Experience(Test Set)")+
+  xlab("Years of Experience")+
+  ylab("Salary")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
